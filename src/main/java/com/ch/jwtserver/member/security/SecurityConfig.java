@@ -1,5 +1,6 @@
 package com.ch.jwtserver.member.security;
 
+import com.ch.jwtserver.member.handler.MySuccessHandler;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -41,20 +42,28 @@ public class SecurityConfig {
     }
 
     @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
+    public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity, MySuccessHandler mySuccessHandler) throws Exception {
         // 스프링 부트에서 설정해놓은 필터체인을 내가 원하는 방식으로 설정을 바꿔서, 바뀐 SecurityFilterChain 반환
 
         httpSecurity.cors(cors -> {});  // 위에 설정한 빈을 사용
         httpSecurity.csrf(csrf -> csrf.disable());
 
         // 폼로그인 끄기
-        httpSecurity.formLogin(form -> form.disable());
-        httpSecurity.httpBasic(basic -> basic.disable());
+        //httpSecurity.formLogin(form -> form.disable());
+        //httpSecurity.httpBasic(basic -> basic.disable());
 
         httpSecurity.authorizeHttpRequests(auth -> auth
                 .requestMatchers("/test").permitAll()
-                .requestMatchers("/api/**").permitAll()
+                .requestMatchers("/api/auth/login").permitAll()
                 .anyRequest().authenticated()
+        );
+
+        // 스프링이 기본으로 제공해주는 로그인폼을 쓰지는 않지만, 필터 체인을 그대로 타고 들어갈 수 있도록 설정..
+        httpSecurity.formLogin(form -> form
+                .loginProcessingUrl("/api/auth/login") // 스프링이 지원하는 디폴트 로그인 요청 URL을 사용하지 않고, 개발자가 원하는 것으로 URL 바꿈
+                .usernameParameter("homepageId")    // 스프링에게 로그인 파라미터 중 ID 변수명을 알려주고(기본 로그인 폼을 사용하지 않으니 알려줘야 함)
+                .passwordParameter("password")
+                .successHandler(mySuccessHandler)
         );
 
         return httpSecurity.build();
