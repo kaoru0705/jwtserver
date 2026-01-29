@@ -12,7 +12,7 @@ import lombok.Setter;
 @Getter
 @Setter
 public class MemberResponse {
-
+    private Long memberId;
     private String homepageId;
     private String name;
 

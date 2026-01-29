@@ -22,7 +22,6 @@ public class AuthService {
     // 가입시키기
     @Transactional
     public Member regist(MemberRequest memberRequest) {
-
         Member member = new Member();
         member.setHomepageId(memberRequest.getHomepageId());
         member.setPassword(passwordEncoder.encode(memberRequest.getPassword()));
@@ -31,4 +30,14 @@ public class AuthService {
         return memberRepository.save(member);
     }
 
+    // 회원 한 명 가져오기
+    @Transactional(readOnly = true)
+    public Member findByHomepageId(String homepageId) {
+        return memberRepository.findByHomepageId(homepageId).orElseThrow(() -> new IllegalArgumentException("존재하지 않는 회원입니다."));
+    }
+
+    // PasswordEncoder를 이용하여, 그냥 날것인 RawPassword와 DB의 암호화된 비번을 비교해보기
+    public boolean matchPassword(String rawPassword, Member member) {
+        return passwordEncoder.matches(rawPassword, member.getPassword());
+    }
 }
