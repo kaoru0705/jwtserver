@@ -31,7 +31,7 @@ public class MemberController {
         MemberResponse memberResponse = new MemberResponse();
         memberResponse.setHomepageId(member.getHomepageId());
         memberResponse.setName(member.getName());
-        
+
         return memberResponse;
     }
 }
