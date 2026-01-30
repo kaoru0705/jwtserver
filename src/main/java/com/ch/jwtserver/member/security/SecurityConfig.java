@@ -49,6 +49,7 @@ public class SecurityConfig {
 
         // 폼로그인 끄기
         httpSecurity.formLogin(form -> form.disable());
+        // httpBasic은 브라우저에서 띄우는 기본 아이디/비번 입력창 팝업을 의미합니다.
         httpSecurity.httpBasic(basic -> basic.disable());
 
         httpSecurity.authorizeHttpRequests(auth -> auth
